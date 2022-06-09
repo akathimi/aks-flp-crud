@@ -23,6 +23,8 @@ LOCATION="uksouth"
 VALIDATE=0
 HELP=0
 VERSION=0
+lab_names=""
+number_of_labs=0
 
 while true ;
 do
@@ -56,8 +58,8 @@ do
 done
 
 # Variable definition
-SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
-SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
+# SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
+# SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
 SCRIPT_VERSION="Version v0.0.5 20211112"
 
 # Funtion definition
@@ -73,8 +75,8 @@ function az_login_check () {
 
 # check resource group and cluster
 function check_resourcegroup_cluster () {
-    RESOURCE_GROUP="$1"
-    CLUSTER_NAME="$2"
+    # RESOURCE_GROUP="$1"
+    # CLUSTER_NAME="$2"
 
     RG_EXIST=$(az group show -g $RESOURCE_GROUP &>/dev/null; echo $?)
     if [ $RG_EXIST -ne 0 ]
@@ -109,14 +111,13 @@ function validate_cluster_exists () {
 
 # Usage text
 function print_usage_text () {
-    NAME_EXEC="aks-flp-crud"
+    NAME_EXEC="$SAP"
     echo -e "$NAME_EXEC usage: $NAME_EXEC -l <LAB#> -u <USER_ALIAS> [-v|--validate] [-r|--region] [-h|--help] [--version]\n"
-    echo -e "\nHere is the list of current labs available:\n
-*************************************************************************************
-*\t 1. AKS scale failed
-*\t 2. AKS delete failed
-*\t 3. AKS upgrade failed
-*************************************************************************************\n"
+    echo -e "\nHere is the list of current labs available:\n*************************************************************************************"
+    for lab in "${lab_names[@]}"; do
+    echo -e "*\t$lab"
+    done
+    echo -e "*************************************************************************************\n"
 }
 
 #if -h | --help option is selected usage will be displayed
@@ -149,13 +150,14 @@ if [ -z $USER_ALIAS ]; then
 fi
 
 # lab scenario has a valid option
-if [[ ! $LAB_SCENARIO =~ ^[1-3]+$ ]];
+if [[ ! $LAB_SCENARIO =~ ^["$number_of_labs"]+$ ]];
 then
     echo -e "\n--> Error: invalid value for lab scenario '-l $LAB_SCENARIO'\nIt must be value from 1 to 3\n"
     exit 11
 fi
 
 # main
+source $SAP/*
 echo -e "\n--> AKS Troubleshooting sessions
 ********************************************
 
@@ -195,5 +197,4 @@ else
     echo -e "\n--> Error: no valid option provided\n"
     exit 12
 fi
-
 exit 0
