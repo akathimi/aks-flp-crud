@@ -95,13 +95,3 @@ function lab_scenario_3_validation () {
     fi
 }
 
-#if -h | --help option is selected usage will be displayed
-if [ $HELP -eq 1 ]
-then
-	print_usage_text
-    echo -e '"-l|--lab" Lab scenario to deploy (3 possible options)
-"-r|--region" region to create the resources
-"--version" print version of aks-flp-crud
-"-h|--help" help info\n'
-	exit 0
-fi
